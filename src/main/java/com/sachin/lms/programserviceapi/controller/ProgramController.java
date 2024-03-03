@@ -1,0 +1,51 @@
+package com.sachin.lms.programserviceapi.controller;
+
+import com.sachin.lms.programserviceapi.dto.request.RequestProgramDto;
+import com.sachin.lms.programserviceapi.service.ProgramService;
+import com.sachin.lms.programserviceapi.util.StandardResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/programs")
+@RequiredArgsConstructor
+public class ProgramController {
+
+    /*
+    *
+    * {
+    "name":"Fullstak Development Program",
+    "price":50000,
+    "startDate":"2024-03-20",
+    "subjects":[
+        {"id":1,"name":"Java"},
+        {"id":2,"name":"Html"},
+        {"id":3,"name":"Css"},
+        {"id":4,"name":"Java Script"},
+        {"id":1,"name":"C#"}
+    ]
+}
+    *
+    *
+    *
+    * */
+
+    private final ProgramService programService;
+
+    @PostMapping
+    private ResponseEntity<StandardResponse> createProgram(
+            @RequestBody RequestProgramDto requestProgramDto
+    ) {
+        programService.createProgram(requestProgramDto);
+        return new ResponseEntity<>(
+                new StandardResponse(201, "Program was Saved!",
+                        requestProgramDto.getName()),
+                HttpStatus.CREATED
+        );
+    }
+}
