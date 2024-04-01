@@ -8,7 +8,6 @@ import com.sachin.lms.programserviceapi.repo.ProgramRepository;
 import com.sachin.lms.programserviceapi.service.ProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,8 @@ import java.util.stream.Collectors;
 public class ProgramServiceImpl implements ProgramService {
 
     private final ProgramRepository programRepository;
-    private final WebClient webClient;
+    private final ProgramAspectsServiceImpl programAspectsService;
+
 
     @Override
     public void createProgram(RequestProgramDto programDto) {
@@ -38,12 +38,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         String ids =  list.stream().map(Object::toString).collect(Collectors.joining(", "));
 
-        System.out.println(ids);
-
-        Boolean isOk = webClient.get().uri("http://localhost:8082/api/v1/subjects/{id}",ids)
-                .retrieve()
-                .bodyToMono(Boolean.class)
-                .block();
+        Boolean isOk = programAspectsService.checkSubjects(ids);
 
         if(Boolean.TRUE.equals(isOk)){
             programRepository.save(program);
@@ -52,6 +47,7 @@ public class ProgramServiceImpl implements ProgramService {
         }
 
     }
+
 
     @Override
     public List<ResponseProgramDto> findAllPrograms() {
